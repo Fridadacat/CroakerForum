@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 			$_SESSION['username'] = $username;
 			$_SESSION['loggedin'] = true;
 			session_regenerate_id(true);
-			header('Location:admin.php'); //redirect
+			header('Location:index.php'); //redirect
 		} else {
 			$error .= "Das Passwort ist falsch! <br>";
 		}

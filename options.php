@@ -1,7 +1,6 @@
 <?php
 
 session_start();
-include('db_connector.inc.php');
 
 // variablen initialisieren
 $error = $message = '';
@@ -9,13 +8,7 @@ $error = $message = '';
 // TODO -  Wenn personalisierte Session: Begrüssen des Benutzers mit Benutzernamen aus der Session
     if (!isset($_SESSION['loggedin']) or !$_SESSION['loggedin']) {
         $error .= "Sie sind nicht angemeldet, melden Sie sich bitte auf der  <a href='login.php'>Login-Seite</a> an.";
-        //header('Location:login.php'); //redirect
-        //die();
-    } else {
-        $username = $_SESSION['username'];
-        $message .= " Servus $username!";
     }
-
     if (!empty($error)) {
         $message = $error;
     }
@@ -28,7 +21,7 @@ $error = $message = '';
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Administrationbereich</title>
+    <title>Administrationsbereich</title>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -43,13 +36,17 @@ $error = $message = '';
     ?>
     <div class="container">
     <br>
-        <h1>Croakerfeed</h1>
+        <h1>Administrationbereich</h1>
         <?php
         // Ausgabe der Fehlermeldungen
         if (!empty($error)) {
             echo "<div class=\"alert alert-danger\" role=\"alert\">" . $error . "</div>";
-        } else if (!empty($message)) {
-            echo "<div class=\"alert alert-success\" role=\"alert\">" . $message . "</div>";
+        } else {
+            echo "<label>Was möchten Sie tun?</label><br><br>";
+            echo "<a href='changepassword.php'>Passwort ändern</a><br>";
+            echo "<a href='changeUsername.php'>Benutzernamen ändern</a><br><br>";
+            echo "<br>";
+            echo "<a href='deleteaccount.php'><button class='btn btn-danger'>Account Löschen</button></a>";
         }
         ?>
     </div>
