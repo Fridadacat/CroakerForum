@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 	if(empty($error)){
 
 		$booleanFoundUser = true;
-		$query = "select password from users where username = ?";
+		$query = "select password from user where username = ?";
 		$stmt = $mysqli->prepare($query);
 		$stmt->bind_param("s", $username);
 		$stmt->execute();

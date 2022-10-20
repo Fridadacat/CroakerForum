@@ -3,7 +3,8 @@ include('db_connector.inc.php');
 session_start();
 
 // variablen initialisieren
-$error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
+$error = $message = $username = $password = '';
+$oldusername = $_SESSION['username'];
 
 // TODO -  Wenn personalisierte Session: Begrüssen des Benutzers mit Benutzernamen aus der Session
     if (!isset($_SESSION['loggedin']) or !$_SESSION['loggedin']) {
@@ -16,72 +17,60 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
         print_r($_POST);
         echo "</pre>";
     
-        $oldpassword = trim($_POST['oldpassword']);
-        $newpassword = trim($_POST['newpassword']);
-        $newpasswordrepeat = trim($_POST['newpasswordrepeat']);
+        $username = trim($_POST['username']);
+        $password = trim($_POST['password']);
 
         $sendData = true;
 
-        $isOldPasswordCorrect = validateOldPassword($oldpassword, $mysqli);
-        $areTheNewPAsswordsEqual = checkIfNewPasswordsAreEqual($newpassword, $newpasswordrepeat);
-        $isTheOldPasswordTheSameAsTheNewOne = checkIfNewPasswordDoesNotEqualOldPassword($newpassword, $mysqli);
+        $isPasswordCorrect = validatePassword($password, $mysqli);
+        $areTheUsernamesEqual = validateUsername($username);
+        $doesUsernameAlreadyExist = checkIfUsernameAlreadyExists($username, $mysqli);
+        //check if name allready exists
 
-        if ($isOldPasswordCorrect != true) {
+        if ($isPasswordCorrect != true) {
             $sendData = false;
             $error .= "Ihr altes Passwort ist inkorrekt.<br>";
         }
-        
-        if ($areTheNewPAsswordsEqual != true) {
+
+        if ($areTheUsernamesEqual != true) {
             $sendData = false;
-            $error .= "Die neuen Passwörter stimmen nicht miteinander überein.<br>";
+            $error .= "Ihr neuer Benutzername entspricht dem jetzigen.<br>";
         }
 
-        if ($isTheOldPasswordTheSameAsTheNewOne != true) {
+        if ($doesUsernameAlreadyExist != true) {
             $sendData = false;
-            $error .= "Ihr neues Passwort etsprich ihrem alten Passwort.<br>";
+            $error .= "Der Benutzername ist bereits vergeben.<br>";
         }
 
         if ($sendData = true) {
             //validate password
-            if (isset($newpassword)) {
-                if (empty($newpassword)) {
-                    $error . "Bitte gib dein Passwort an!<br>";
-                } else if (strlen($newpassword) < 8) {
-                    $error .= "Ihr Passwort darf nicht kürzer als 8 Zeichen Sein!<br>";
-                } else if (strlen($newpassword) > 255) {
-                    $error .= "Ihr Passwort darf nicht länger als 255 Zeichen Sein!<br>";
-                } else if (!preg_match('/[A-Z]/', $newpassword)) {
-                    $error .= "Ihr Passwort benötigt mindestens einen Grossbuchstaben!<br>";
-                } else if (!preg_match('/[a-z]/', $newpassword)) {
-                    $error .= "Ihr Passwort benötigt mindestens einen Kleinbuchstaben!<br>";
-                } else if (!preg_match('/[0-9]/', $newpassword)) {
-                    $error .= "Ihr Passwort benötigt mindestens eine Zahl!<br>";
-                } else if (strpos($newpassword, '+' || '-' || '*' || '%' || '&' || '/' || '(' || ')' || '=' || '?' || '!' || '$')) {
-                    $error .= "Ihr Passwort benötigt mindestens einen Sonderzeichen. Zugelassen sind: +,-,*,%,&,/,(,),=,?,!,$.<br>";
-                } 
+            if (isset($username)) {
+                if (empty($username)) {
+                    $error .= "Bitte gib deinen Username an!<br>";
+                } else if (strlen($username) < 6) {
+                    $error .= "Ihr Benutzername darf nicht kürzer als 6 Zeichen Sein!<br>";
+                } else if (strlen($username) > 30) {
+                    $error .= "Ihr Benutzername darf nicht länger als 30 Zeichen Sein!<br>";
+                } else if (!preg_match('/[A-Z]/', $username)) {
+                    $error .= "Ihr Benutzername benötigt mindestens einen Grossbuchstaben!<br>";
+                } else if (!preg_match('/[a-z]/', $username)) {
+                    $error .= "Ihr Benutzername benötigt mindestens einen Kleinbuchstaben!<br>";
+                }
             }
         }
 
         if (!empty($error)) {
             $message = $error;
         } else {
-            
-            $hashedPassword = password_hash($newpassword, PASSWORD_DEFAULT);
-            if ($hashedPassword === false) {
-                $error .= "Ihr passwort konnte nicht gehasht werden und ist somit nicht sicher! <br>";
-                $hashedPassword = $password;
-            }
-
-            $username = $_SESSION['username'];
             // SQL-Statement erstellen
-            $query = "update user set password = (?) where username = '$username'";
+            $query = "update user set username = (?) where username = '$oldusername'";
             // SQL-Statement vorbereiten
             $stmt = $mysqli->prepare($query);
             if ($stmt === false) {
                 $error .= 'prepare() failed ' . $mysqli->error . '<br />';
             }
             // Daten an das SQL-Statement binden
-            if (!$stmt->bind_param('s', $hashedPassword)) {
+            if (!$stmt->bind_param('s', $username)) {
                 $error .= 'bind_param() failed ' . $mysqli->error . '<br />';
             }
             // SQL-Statement ausführen
@@ -94,7 +83,7 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
         }
     }
 
-    function validateOldPassword($password, $mysqli) {
+    function validatePassword($password, $mysqli) {
         $query = "select password from user where username = ?";
 		$stmt = $mysqli->prepare($query);
 		$stmt->bind_param("s", $_SESSION['username']);
@@ -109,28 +98,29 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
         }
     }
 
-    function checkIfNewPasswordsAreEqual($password1, $password2) {
-        if($password1 === $password2) {
-            return true;
-        } else {
+    function validateUsername($username) {
+        if ($username == $_SESSION['username']) {
             return false;
+        } else {
+            return true;
         }
     }
 
-    function checkIfNewPasswordDoesNotEqualOldPassword($newpassword, $mysqli) {
-        $query = "select password from user where username = ?";
+    function checkIfUsernameAlreadyExists($username, $mysqli) {
+        $query = "select username from user where username = ?";
 		$stmt = $mysqli->prepare($query);
-		$stmt->bind_param("s", $_SESSION['username']);
+		$stmt->bind_param("s", $username);
 		$stmt->execute();
 		$result=$stmt->get_result();
-		$dbPassword = $result->fetch_assoc();
+		$user = $result->fetch_assoc();
 
-        if(password_verify($newpassword, $dbPassword["password"])) {
+        if (isset($user) && !empty($user)){
             return false;
         } else {
             return true;
         }
     }
+
 
 ?>
 
@@ -156,24 +146,20 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
     ?>
     <div class="container">
     <br>
-        <h1>Administrationbereich / Passwort ändern</h1>
+        <h1>Administrationbereich / Benutzernamen ändern</h1>
         <?php
         // Ausgabe der Fehlermeldungen
         if (!empty($error)) {
             echo "<div class=\"alert alert-danger\" role=\"alert\">" . $error . "</div>";
         }?>
         <form action="" method="post">
-			<div class="form-group">
-				<label for="password">Altes Passwort:</label>
-				<input type="password" name="oldpassword" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($oldpassword) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+            <div class="form-group">
+				<label for="username">Neuer Benutzername:</label>
+				<input type="text" name="username" class="form-control" id="username" maxlength="30" required value="<?php echo htmlspecialchars($username) ?>" placeholder="Gross- und Keinbuchstaben, min 6 Zeichen.">
 			</div>
             <div class="form-group">
-				<label for="password">Neues Passwort:</label>
-				<input type="password" name="newpassword" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($newpassword) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
-			</div>
-            <div class="form-group">
-				<label for="password">Neues Passwort wiederholen:</label>
-				<input type="password" name="newpasswordrepeat" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($newpasswordrepeat) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+				<label for="password">Passwort:</label>
+				<input type="password" name="password" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($password) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
 			</div>
 			<button type="submit" name="button" value="submit" class="btn btn-info">Senden</button>
 			<button type="reset" name="button" value="reset" class="btn btn-warning">Löschen</button>

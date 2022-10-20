@@ -111,7 +111,7 @@ function sendRegistrationDataToDatabase($mysqli, $error, $firstname, $lastname, 
 		return $error;
 	}
 	// SQL-Statement erstellen
-	$query = "Insert into users (firstname, lastname, email, username, password) values (?, ?, ?, ?, ?)";
+	$query = "Insert into user (firstname, lastname, email, username, password) values (?, ?, ?, ?, ?)";
 	// SQL-Statement vorbereiten
 	$stmt = $mysqli->prepare($query);
 	if ($stmt === false) {
@@ -132,7 +132,7 @@ function sendRegistrationDataToDatabase($mysqli, $error, $firstname, $lastname, 
 
 function chekIfUserAllreadyExists($mysqli, $username)
 {
-	$query = "select * from users where username = ?";
+	$query = "select * from user where username = ?";
 	$stmt = $mysqli->prepare($query);
 	$stmt->bind_param("s", $username);
 	$stmt->execute();

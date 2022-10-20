@@ -2,9 +2,9 @@
 
 //initialisierung datenbank
 $host = 'localhost';
-$username = 'webseite';
-$password = 'webseite123';
-$databse = '151_users';
+$username = 'croaker';
+$password = 'croaker123';
+$databse = 'mydb';
 
 //mit datenbank verbinden
 $mysqli = new mysqli($host, $username, $password, $databse);
