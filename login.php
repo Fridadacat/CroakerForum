@@ -10,16 +10,13 @@ $message = '';
 
 // Formular wurde gesendet und Besucher ist noch nicht angemeldet.
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
-	echo "<pre>";
-	print_r($_POST);
-	echo "</pre>";
 	// username
 	if(isset($_POST['username'])){
 		//trim
 		$username = trim($_POST['username']);
 		
 		// prüfung benutzername
-		if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}/", $username)){
+		if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{6,30}/", $username)){
 			$error .= "Der Benutzername entspricht nicht dem geforderten Format.<br />";
 		}
 	} else {
@@ -107,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 					<input type="text" name="username" class="form-control" id="username"
 						value=""
 						placeholder="Gross- und Keinbuchstaben, min 6 Zeichen."
-						pattern="(?=.*[a-z])(?=.*[A-Z])[a-zA-Z]{6,30}"
+						pattern="[A-Za-z]+"
 						title="Gross- und Keinbuchstaben, min 6 Zeichen."
 						maxlength="30" 
 						required="true">

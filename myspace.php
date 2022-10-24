@@ -2,7 +2,6 @@
 
 session_start();
 include('db_connector.inc.php');
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 // variablen initialisieren
 $error = $message = '';
@@ -14,7 +13,7 @@ $error = $message = '';
         //die();
     } else {
         $username = $_SESSION['username'];
-        $message .= " Servus $username!";
+        $message .= "Alle Croaks von $username";
     }
 
     if (!empty($error)) {
@@ -23,7 +22,8 @@ $error = $message = '';
 
     function getLastTwentyCroaks($mysqli) {
 
-        $result = mysqli_query($mysqli, "select * from croak order by croakid desc limit 20");
+        $userId = getUserId($mysqli, $_SESSION['username']);
+        $result = mysqli_query($mysqli, "select * from croak where user_userid = $userId order by croakid desc");
         $returnString = "";
 
         while($row = mysqli_fetch_row($result)) {
@@ -56,6 +56,16 @@ $error = $message = '';
 		$username = $result->fetch_assoc();
         return $username['username'];
     }
+
+    function getUserId($mysqli, $userName) {
+        $query = "select userid from user where username = ?";
+		$stmt = $mysqli->prepare($query);
+		$stmt->bind_param("s", $userName);
+		$stmt->execute();
+		$result=$stmt->get_result();
+		$username = $result->fetch_assoc();
+        return $username['userid'];
+    }
 ?>
 
 <!DOCTYPE html>
@@ -81,7 +91,7 @@ $error = $message = '';
     ?>
     <div class="container">
     <br>
-        <h1>Croakerfeed</h1>
+        <h1>Meine Croaks</h1>
         <?php
         // Ausgabe der Fehlermeldungen
         if (!empty($error)) {

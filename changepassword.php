@@ -11,10 +11,6 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
     }
 
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
-        // Ausgabe des gesamten $_POST Arrays zum debuggen
-        echo "<pre>";
-        print_r($_POST);
-        echo "</pre>";
     
         $oldpassword = trim($_POST['oldpassword']);
         $newpassword = trim($_POST['newpassword']);

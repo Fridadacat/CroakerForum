@@ -26,4 +26,66 @@
         return $returnString;
     }
 
+    function showPostButton($session) {
+        if (!isset($session['loggedin']) or !$session['loggedin']) {
+            $returnString = '<button id="btnpost"><img src="postGrey.png" width=65 href="/post.php">';
+        } else {
+            $returnString = '<a href="post.php"><button id="btnpost"><img src="post.png" width=65 href="/post.php"></button></a>';
+        }
+        return $returnString;
+    }
+
+    function showCroak($userName, $croak, $datetime, $isUserCreator, $croakId, $showReportOption) {
+        $croak =    filter_var($croak, FILTER_SANITIZE_SPECIAL_CHARS);
+        $returnString = "";
+        $userName .= "       "; //gap between edit button and username
+
+        if($isUserCreator == true) {
+            $returnString.= '<div class="croak">';
+                $returnString.= '<h3>';
+                    $returnString.= $userName;
+                    $returnString.= '<a href="croak.php?croakId='.$croakId.'"><img src="options.png" width=20></a>';
+                $returnString.= '</h3>';
+                $returnString.= $croak;
+                $returnString.= '<div class="datetime"><i>';
+                $returnString.= $datetime;
+                $returnString.= '</i></div>';
+            $returnString.= '</div>';
+
+            $returnString.= "<br>";
+
+        } else if ($showReportOption == true){
+
+            $returnString.= '<div class="croak">';
+                $returnString.= '<h3>';
+                    $returnString.= $userName;
+                    $returnString.= '<a href="croak.php?croakId='.$croakId.'"><img src="report.png" width=20></a>';
+                $returnString.= '</h3>';
+                $returnString.= $croak;
+                $returnString.= '<div class="datetime"><i>';
+                $returnString.= $datetime;
+                $returnString.= '</i></div>';
+            $returnString.= '</div>';
+
+            $returnString.= "<br>";
+
+        } else {
+
+            $returnString.= '<div class="croak">';
+            $returnString.= '<h3>';
+                $returnString.= $userName;
+            $returnString.= '</h3>';
+            $returnString.= $croak;
+            $returnString.= '<div class="datetime"><i>';
+            $returnString.= $datetime;
+            $returnString.= '</i></div>';
+        $returnString.= '</div>';
+        $returnString.= "<br>";
+        
+        }
+
+        return $returnString;
+    }
+
+
 ?>

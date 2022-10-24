@@ -8,10 +8,6 @@ $firstname = $lastname = $email = $username = $password = $message = '';
 
 // Wurden Daten mit "POST" gesendet?
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-	// Ausgabe des gesamten $_POST Arrays zum debuggen
-	echo "<pre>";
-	print_r($_POST);
-	echo "</pre>";
 
 	$firstname = trim($_POST['firstname']);
 	$lastname = trim($_POST['lastname']);
@@ -197,7 +193,7 @@ function hashPassword($password)
 			</div>
 			<div class="form-group">
 				<label for="email">Email *</label>
-				<input type="email" name="email" class="form-control" id="email" maxlength="100" required value="<?php echo $email ?>" placeholder="Geben Sie Ihre Email-Adresse an.">
+				<input type="email" name="email" class="form-control" id="email" maxlength="100" required value="<?php echo htmlspecialchars($email) ?>" placeholder="Geben Sie Ihre Email-Adresse an.">
 			</div>
 			<div class="form-group">
 				<label for="username">Benutzername *</label>
