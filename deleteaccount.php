@@ -60,7 +60,7 @@ $error = $message = '';
     ?>
     <div class="container">
     <br>
-        <h1>Administrationbereich</h1>
+        <h1>Administrationbereich / Account löschen</h1>
         <?php
         // Ausgabe der Fehlermeldungen
         if (!empty($error)) {
