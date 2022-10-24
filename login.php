@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 		$username = trim($_POST['username']);
 		
 		// prüfung benutzername
-		if(empty($username) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{6,30}/", $username)){
+		if(empty($username) || !preg_match("/[0-9a-zA-Z]{6,30}/", $username)){
 			$error .= "Der Benutzername entspricht nicht dem geforderten Format.<br />";
 		}
 	} else {
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 		//trim
 		$password = trim($_POST['password']);
 		// passwort gültig?
-		if(empty($password) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $password)){
+		if(empty($password) || !preg_match("/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/", $password)){
 			$error .= "Das Passwort entspricht nicht dem geforderten Format.<br />";
 		}
 	} else {
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 					<input type="text" name="username" class="form-control" id="username"
 						value=""
 						placeholder="Gross- und Keinbuchstaben, min 6 Zeichen."
-						pattern="[A-Za-z]+"
+						pattern="[0-9a-zA-Z]{6,30}"
 						title="Gross- und Keinbuchstaben, min 6 Zeichen."
 						maxlength="30" 
 						required="true">
@@ -114,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 					<label for="password">Password *</label>
 					<input type="password" name="password" class="form-control" id="password"
 						placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute"
-						pattern="(?=^.{8,}$)((?=.*\d+)(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+						pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 						title="mindestens einen Gross-, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen, mindestens 8 Zeichen lang,keine Umlaute."
 						maxlength="255"
 						required="true">

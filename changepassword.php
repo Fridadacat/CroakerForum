@@ -54,7 +54,9 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
                     $error .= "Ihr Passwort benötigt mindestens eine Zahl!<br>";
                 } else if (strpos($newpassword, '+' || '-' || '*' || '%' || '&' || '/' || '(' || ')' || '=' || '?' || '!' || '$')) {
                     $error .= "Ihr Passwort benötigt mindestens einen Sonderzeichen. Zugelassen sind: +,-,*,%,&,/,(,),=,?,!,$.<br>";
-                } 
+                } else if(!preg_match('/[^äöüÄÖÜ]/', $password)) {
+                    $error .= "Ihr Passwort beinhaltet Sonderzeichen!<br>";
+                }
             }
         }
 
@@ -161,15 +163,15 @@ $error = $message = $oldpassword = $newpassword = $newpasswordrepeat = '';
         <form action="" method="post">
 			<div class="form-group">
 				<label for="password">Altes Passwort:</label>
-				<input type="password" name="oldpassword" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($oldpassword) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+				<input type="password" name="oldpassword" pattern="[0-9a-zA-Z]{6,30}" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($oldpassword) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
 			</div>
             <div class="form-group">
 				<label for="password">Neues Passwort:</label>
-				<input type="password" name="newpassword" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($newpassword) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+				<input type="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" name="newpassword" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($newpassword) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
 			</div>
             <div class="form-group">
 				<label for="password">Neues Passwort wiederholen:</label>
-				<input type="password" name="newpasswordrepeat" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($newpasswordrepeat) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+				<input type="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" name="newpasswordrepeat" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($newpasswordrepeat) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
 			</div>
 			<button type="submit" name="button" value="submit" class="btn btn-info">Senden</button>
 			<button type="reset" name="button" value="reset" class="btn btn-warning">Löschen</button>

@@ -151,11 +151,11 @@ $oldusername = $_SESSION['username'];
         <form action="" method="post">
             <div class="form-group">
 				<label for="username">Neuer Benutzername:</label>
-				<input type="text" name="username" class="form-control" id="username" maxlength="30" required value="<?php echo htmlspecialchars($username) ?>" placeholder="Gross- und Keinbuchstaben, min 6 Zeichen.">
+				<input type="text" name="username" pattern="[0-9a-zA-Z]{6,30}" class="form-control" id="username" maxlength="30" required value="<?php echo htmlspecialchars($username) ?>" placeholder="Gross- und Keinbuchstaben, min 6 Zeichen.">
 			</div>
             <div class="form-group">
 				<label for="password">Passwort:</label>
-				<input type="password" name="password" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($password) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
+				<input type="password" name="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" class="form-control" id="password" maxlength="255" required value="<?php echo htmlspecialchars($password) ?>" placeholder="Gross- und Kleinbuchstaben, Zahlen, Sonderzeichen, min. 8 Zeichen, keine Umlaute">
 			</div>
 			<button type="submit" name="button" value="submit" class="btn btn-info">Senden</button>
 			<button type="reset" name="button" value="reset" class="btn btn-warning">Löschen</button>
